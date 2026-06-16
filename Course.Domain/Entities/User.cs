@@ -17,7 +17,7 @@ namespace Course.Domain.Entities
         public DateTime ?EmailVerifiedAt { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
-        
+        public DateTime? DeletedAt { get; set; } = DateTime.Now;
         public ICollection<Course> Courses { get; set; }
     }
 }
