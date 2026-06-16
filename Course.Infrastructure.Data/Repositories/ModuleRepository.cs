@@ -1,33 +1,45 @@
 ﻿using Course.Domain.Entities;
 using Course.Domain.Interfaces;
+using Course.Infrastructure.Data.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace Course.Infrastructure.Data.Repositories
 {
     public class ModuleRepository :  IModuleRepository
     {
-        public Task<Module> GetByIdAsync(int id)
+        private readonly AppDbContext _context;
+        public async Task<Module> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Modules.Where(x => x.DeletedAt != null && x.Id ==  id).FirstOrDefaultAsync();
         }
 
-        public Task<List<Module>> GetAllAsync()
+        public async Task<List<Module>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Modules.Where(x => x.DeletedAt != null).ToListAsync();
         }
 
-        public Task AddAsync(Module category)
+        public async Task AddAsync(Module module)
         {
-            throw new NotImplementedException();
+            _context.Modules.Add(module);
+            await _context.SaveChangesAsync();
         }
 
-        public Task UpdateAsync(int id, Module category)
+        public async Task UpdateAsync(int id, Module module)
         {
-            throw new NotImplementedException();
+            _context.Modules.Update(module);
+            await _context.SaveChangesAsync();
         }
 
-        public Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var module = await this.GetByIdAsync(id);
+            if (module != null)
+            {
+                module.DeletedAt = DateTime.Now;
+                _context.Modules.Update(module);
+
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

@@ -1,32 +1,44 @@
 ﻿using Course.Domain.Interfaces;
+using Course.Infrastructure.Data.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace Course.Infrastructure.Data.Repositories
 {
     public class CourseRepository : ICourseRepository
     {
-        public Task<Domain.Entities.Course> GetByIdAsync(int id)
+        private readonly AppDbContext _context;
+        public async Task<Domain.Entities.Course> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Courses.Where(x => x.DeletedAt != null && x.Id == id).FirstOrDefaultAsync();
         }
 
-        public Task<IEnumerable<Domain.Entities.Course>> GetAllAsync()
+        public async Task<IEnumerable<Domain.Entities.Course>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Courses.Where(x => x.DeletedAt != null).ToListAsync();
         }
 
-        public Task AddAsync(Domain.Entities.Course course)
+        public async Task AddAsync(Domain.Entities.Course course)
         {
-            throw new NotImplementedException();
+            _context.Courses.Add(course);
+            await _context.SaveChangesAsync();
         }
 
-        public Task UpdateAsync(Domain.Entities.Course course)
+        public async Task UpdateAsync(Domain.Entities.Course course)
         {
-            throw new NotImplementedException();
+            _context.Courses.Update(course);
+            await _context.SaveChangesAsync();
         }
 
-        public Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var course = await this.GetByIdAsync(id);
+            if (course != null)
+            {
+                course.DeletedAt = DateTime.Now;
+                _context.Courses.Update(course);
+
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

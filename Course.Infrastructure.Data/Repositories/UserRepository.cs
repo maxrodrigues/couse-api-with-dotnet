@@ -1,33 +1,45 @@
 ﻿using Course.Domain.Entities;
 using Course.Domain.Interfaces;
+using Course.Infrastructure.Data.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace Course.Infrastructure.Data.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        public Task<User> GetByIdAsync(int id)
+        private readonly AppDbContext _context;
+        public async Task<User> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
         }
 
-        public Task<List<User>> GetAllAsync()
+        public async Task<List<User>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Users.ToListAsync();
         }
 
-        public Task AddAsync(User category)
+        public async Task AddAsync(User user)
         {
-            throw new NotImplementedException();
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
         }
 
-        public Task UpdateAsync(int id, User category)
+        public async Task UpdateAsync(int id, User user)
         {
-            throw new NotImplementedException();
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
         }
 
-        public Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var user = await this.GetByIdAsync(id);
+            if (user != null)
+            {
+                user.DeletedAt = DateTime.Now;
+                _context.Users.Update(user);
+
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

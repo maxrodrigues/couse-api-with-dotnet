@@ -1,33 +1,45 @@
 ﻿using Course.Domain.Entities;
 using Course.Domain.Interfaces;
+using Course.Infrastructure.Data.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace Course.Infrastructure.Data.Repositories
 {
     public class LessonRepository : ILessonRepository
     {
-        public Task<Lesson> GetByIdAsync(int id)
+        private readonly AppDbContext _context;
+        public async Task<Lesson> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Lessons.Where(x => x.DeletedAt != null && x.Id == id).FirstOrDefaultAsync();
         }
 
-        public Task<List<Lesson>> GetAllAsync()
+        public async Task<List<Lesson>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Lessons.Where(x => x.DeletedAt != null).ToListAsync();
         }
 
-        public Task AddAsync(Lesson category)
+        public async Task AddAsync(Lesson lesson)
         {
-            throw new NotImplementedException();
+            _context.Lessons.Add(lesson);
+            await _context.SaveChangesAsync();
         }
 
-        public Task UpdateAsync(int id, Lesson category)
+        public async Task UpdateAsync(int id, Lesson lesson)
         {
-            throw new NotImplementedException();
+            _context.Lessons.Update(lesson);
+            await _context.SaveChangesAsync();
         }
 
-        public Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var lesson = await this.GetByIdAsync(id);
+            if (lesson != null)
+            {
+                lesson.DeletedAt = DateTime.Now;
+                _context.Lessons.Update(lesson);
+
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }
