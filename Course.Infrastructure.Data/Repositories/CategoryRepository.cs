@@ -9,26 +9,35 @@ namespace Course.Infrastructure.Data.Repositories
     {
         private readonly AppDbContext _context;
 
+        public CategoryRepository(AppDbContext context)
+        {
+            _context = context;
+        }
+
         public async Task<Category> GetByIdAsync(int id)
         {
-            return await _context.Categories.Where(x => x.DeletedAt != null &  x.Id == id).FirstOrDefaultAsync();
+            return await _context.Categories.Where(x => x.DeletedAt == null &  x.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<List<Category>> GetAllAsync()
         {
-            return await _context.Categories.Where(x => x.DeletedAt != null).ToListAsync();
+            return await _context.Categories.Where(x => x.DeletedAt == null).ToListAsync();
         }
 
-        public async Task AddAsync(Category category)
+        public async Task<Category> AddAsync(Category category)
         {
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
+
+            return category;
         }
 
-        public async Task UpdateAsync(int id, Category category)
+        public async Task<Category> UpdateAsync(Category category)
         {
             _context.Categories.Update(category);
             await _context.SaveChangesAsync();
+
+            return category;
         }
 
         public async Task DeleteAsync(int id)
@@ -36,8 +45,7 @@ namespace Course.Infrastructure.Data.Repositories
             var category = await this.GetByIdAsync(id);
             if (category != null)
             {
-                category.DeletedAt = DateTime.Now;
-                _context.Categories.Update(category);
+                _context.Categories.Remove(category);
 
                 await _context.SaveChangesAsync();
             }

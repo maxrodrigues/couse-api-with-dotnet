@@ -6,8 +6,8 @@ namespace Course.Domain.Interfaces
     {
         Task<Category> GetByIdAsync (int id);
         Task<List<Category>> GetAllAsync ();
-        Task AddAsync (Category category);
-        Task UpdateAsync (int id, Category category);
+        Task<Category> AddAsync (Category category);
+        Task<Category> UpdateAsync (Category category);
         Task DeleteAsync (int id);
     }
 }

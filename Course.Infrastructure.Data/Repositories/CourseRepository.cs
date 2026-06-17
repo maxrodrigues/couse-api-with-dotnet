@@ -12,24 +12,28 @@ namespace Course.Infrastructure.Data.Repositories
             return await _context.Courses.Where(x => x.DeletedAt != null && x.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<Domain.Entities.Course>> GetAllAsync()
+        public async Task<List<Domain.Entities.Course>> GetAllAsync()
         {
             return await _context.Courses.Where(x => x.DeletedAt != null).ToListAsync();
         }
 
-        public async Task AddAsync(Domain.Entities.Course course)
+        public async Task<Domain.Entities.Course> AddAsync(Domain.Entities.Course course)
         {
             _context.Courses.Add(course);
             await _context.SaveChangesAsync();
+
+            return course;
         }
 
-        public async Task UpdateAsync(Domain.Entities.Course course)
+        public async Task<Domain.Entities.Course> UpdateAsync(Domain.Entities.Course course)
         {
             _context.Courses.Update(course);
             await _context.SaveChangesAsync();
+
+            return course;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<Domain.Entities.Course> DeleteAsync(int id)
         {
             var course = await this.GetByIdAsync(id);
             if (course != null)
@@ -39,6 +43,8 @@ namespace Course.Infrastructure.Data.Repositories
 
                 await _context.SaveChangesAsync();
             }
+
+            return course;
         }
     }
 }

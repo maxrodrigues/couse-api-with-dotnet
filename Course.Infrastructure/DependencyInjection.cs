@@ -1,4 +1,6 @@
-﻿using Course.Domain.Interfaces;
+﻿using Course.Application.Interfaces;
+using Course.Application.Services;
+using Course.Domain.Interfaces;
 using Course.Infrastructure.Data.Context;
 using Course.Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +24,10 @@ namespace Course.Infrastructure
             services.AddScoped<ILessonRepository, LessonRepository>();
             services.AddScoped<IModuleRepository, ModuleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
-            
+
+            services.AddTransient<ICategoryService, CategoryService>();
+            services.AddTransient<ICourseService, CourseService>();
+
             return services;
         }
     }

@@ -3,9 +3,9 @@
     public interface ICourseRepository
     {
         Task<Entities.Course> GetByIdAsync(int id);
-        Task<IEnumerable<Entities.Course>> GetAllAsync();
-        Task AddAsync(Entities.Course course);
-        Task UpdateAsync(Entities.Course course);
-        Task DeleteAsync(int id);
+        Task<List<Entities.Course>> GetAllAsync();
+        Task<Entities.Course> AddAsync(Entities.Course course);
+        Task<Entities.Course> UpdateAsync(Entities.Course course);
+        Task<Entities.Course> DeleteAsync(int id);
     }
 }
